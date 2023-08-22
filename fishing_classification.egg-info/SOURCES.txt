@@ -1,0 +1,8 @@
+README.md
+setup.py
+fishing_classification.egg-info/PKG-INFO
+fishing_classification.egg-info/SOURCES.txt
+fishing_classification.egg-info/dependency_links.txt
+fishing_classification.egg-info/not-zip-safe
+fishing_classification.egg-info/requires.txt
+fishing_classification.egg-info/top_level.txt
