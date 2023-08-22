@@ -8,6 +8,9 @@ pytz
 
 matplotlib
 seaborn
+descartes
+geopandas
+shapely
 
 scikit-learn
 # Trick to install the version of Tensorflow depending on your processor: darwin == Mac, ARM == M1
