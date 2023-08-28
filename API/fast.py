@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -8,9 +9,13 @@ from joblib import load
 
 
 # Load the trained model
-target_directory = os.path.join(current_directory, '..', 'mlops/training_outputs/models')
+current_directory = os.getcwd()
+target_directory = os.path.join(current_directory, 'mlops/training_outputs/models')
 model_path = os.path.join(target_directory, 'rff_model.joblib')
+print(model_path)
 loaded_model = load(model_path)
+
+# mlops/training_outputs/models/rff_model.joblib
 
 app = FastAPI()
 app.state.model = loaded_model
@@ -46,7 +51,6 @@ def predict(csv_file):      # 1
     result['is_fishing'] = y_pred
 
     return result
-
 
 
 
