@@ -12,6 +12,10 @@ descartes
 geopandas
 shapely
 
+
+fastapi
+uvicorn
+joblib
 streamlit
 
 scikit-learn
