@@ -8,6 +8,7 @@ from joblib import load
 
 
 
+
 # Load the trained model
 current_directory = os.getcwd()
 target_directory = os.path.join(current_directory, 'mlops/training_outputs/models')
@@ -15,7 +16,6 @@ model_path = os.path.join(target_directory, 'rff_model.joblib')
 print(model_path)
 loaded_model = load(model_path)
 
-# mlops/training_outputs/models/rff_model.joblib
 
 app = FastAPI()
 app.state.model = loaded_model
@@ -52,6 +52,33 @@ def predict(csv_file):      # 1
 
     return result
 
+@app.get("/sample")
+def sample(i):      # 1
+    """
+    Use one of our sample track data to visualize how our model work.
+    our sample range between 1 and 20
+    """
+    if i not in range(21):
+        return {'Range error': 'input filename for sample must be between sample1 to sample20'}
+
+    # Check if the uploaded file is a CSV
+    path='mlops/data/sample_data'
+    file_name = f'sample{i}'
+    csv_file = pd.read_csv(f'../{path}/{file_name}.csv')
+
+
+    #Prepocess data function, return dataframe
+    X_processed = preproc(csv_file)
+
+
+    #Run model
+    y_pred = app.state.model.predict(X_processed)
+
+    result = X_processed.copy()
+    result['is_fishing'] = y_pred
+
+    return result
+
 
 
 @app.get("/")
@@ -59,6 +86,13 @@ def root():
     return {
         'greeting': 'Hello'
     }
+
+
+
+# Run the Uvicorn server
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
 def preproc(csv_file):
