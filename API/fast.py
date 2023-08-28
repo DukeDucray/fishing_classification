@@ -59,7 +59,7 @@ def root():
 
 def preproc(csv_file):
 
-    df_fishing = pd.read_csv(f'../{path}/{file_name}.csv')
+    df_fishing = pd.read_csv(csv_file)
     ## round the decimals so that number becomes 0 or 1
     df_fishing.loc[:, ('is_fishing')] = round(df_fishing.loc[:, ('is_fishing')])
 
