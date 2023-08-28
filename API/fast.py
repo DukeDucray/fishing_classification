@@ -1,10 +1,10 @@
 import pandas as pd
 import os
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 from joblib import load
 
+from code_for_API.preproc import preproc
 
 
 
@@ -20,14 +20,6 @@ loaded_model = load(model_path)
 app = FastAPI()
 app.state.model = loaded_model
 
-# Allowing all middleware is optional, but good practice for dev purposes
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins
-    allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods
-    allow_headers=["*"],  # Allows all headers
-)
 
 @app.get("/predict")
 def predict(csv_file):      # 1
@@ -64,11 +56,11 @@ def sample(i):      # 1
     # Check if the uploaded file is a CSV
     path='mlops/data/sample_data'
     file_name = f'sample{i}'
-    csv_file = pd.read_csv(f'../{path}/{file_name}.csv')
+    df = pd.read_csv(f'../{path}/{file_name}.csv')
 
 
     #Prepocess data function, return dataframe
-    X_processed = preproc(csv_file)
+    X_processed = preproc(df)
 
 
     #Run model
@@ -95,7 +87,7 @@ if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
 
-def preproc(csv_file):
+def preproc(df):
 
     df_fishing = pd.read_csv(csv_file)
     ## round the decimals so that number becomes 0 or 1
