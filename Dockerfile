@@ -6,8 +6,7 @@ COPY requirements_image.txt /prod/requirements_image.txt
 RUN pip install -r requirements.txt
 
 
-# Then only, install taxifare!
-COPY mlops/ /prod/mlops/
+# Install API file
 COPY setup.py /prod/setup.py
 COPY API/ /prod/API/
 copy code_for_API/ /prod/code_for_API/
