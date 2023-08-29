@@ -14,6 +14,7 @@ shapely
 
 
 fastapi
+python-multipart
 uvicorn
 joblib
 streamlit
