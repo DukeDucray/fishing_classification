@@ -19,27 +19,9 @@ def extract_sample(X):
 
     return first_group_df_cleaned
 
+
+from code_for_API.preproc import preproc
 ## process raw data for pipeline
-def sample_preproc(df_fishing):
-    # ## Date time (hour -> Angular distance)
-    df_fishing['timestamp'] = pd.to_datetime(df_fishing['timestamp'], unit='s')
-    df_fishing.rename(columns={"timestamp": "date"}, inplace=True)
-    df_fishing['hour'] = df_fishing['date'].dt.hour
-    df_fishing['month'] = df_fishing['date'].dt.month
-    df_fishing['day_of_week'] = df_fishing['date'].dt.day_of_week
-
-    #
-    df_fishing['hour_sin'] = np.sin(df_fishing['hour'] * (2 * np.pi / 24))
-    df_fishing['hour_cos'] = np.cos(df_fishing['hour'] * (2 * np.pi / 24))
-
-    # Dropping rows with NAN values
-    df_fishing_clean = df_fishing.dropna()
-
-    X = df_fishing_clean.drop(columns=['date','hour'])
-
-    return X
-
-
 
 # # Send CSV sample
 def send_csv(df, file_name):
@@ -65,6 +47,6 @@ for file_name in file_names:
 
     data = extract_sample(df)
 
-    df = sample_preproc(data)
+    df = preproc(data)
 
     send_csv(df, file_name)

@@ -9,7 +9,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, OneHotEncoder
 from sklearn.ensemble import RandomForestClassifier
 
-from code_for_API.preproc import preproc
+from code_for_API.preproc import model_train_preproc
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -28,7 +28,9 @@ path='data/raw_data'
 file_names = ['trawlers', 'drifting_longlines', 'fixed_gear', 'pole_and_line', 'purse_seines', 'trollers', 'unknown']
 df = get_data(path, file_names)
 
-df_fishing_clean = preproc(df)
+# # Preprocessing
+
+df_fishing_clean = model_train_preproc(df)
 
 # # Split Data
 # Defining X - the features and Y - the target

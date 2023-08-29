@@ -1,6 +1,7 @@
 import pandas as pd
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
+import io
 
 from joblib import load
 
@@ -18,22 +19,24 @@ loaded_model = load(model_path)
 app = FastAPI()
 app.state.model = loaded_model
 
-
-@app.get("/predict")
-def predict(csv_file):      # 1
+@app.post("/predict")
+async def predict(csv_file: UploadFile = File(...)):
     """
     Predict if the boat is fishing or not.
-    Return dataframe with 'is_fishing' column
+    Return DataFrame with 'is_fishing' column.
     """
     # Check if the uploaded file is a CSV
     if not csv_file.filename.endswith('.csv'):
         return {'error': 'Input file must be in CSV format'}
 
+    content = csv_file.file.read()  # Read the content of the uploaded file
+    df = pd.read_csv(io.BytesIO(content))
 
-    #Prepocess data function, return dataframe
-    X_processed = preproc(csv_file)
+    # Process uploaded CSV file and return DataFrame
+    df = preproc(csv_file)  # Replace with your preproc function
 
-    df = X_processed.drop(columns=['source','date','hour'])
+    # Assuming you preprocess the DataFrame and drop certain columns
+    df = df.drop(columns=['source', 'date', 'hour'])
 
     #Run model
     y_pred = app.state.model.predict(df)
@@ -48,6 +51,7 @@ def predict(csv_file):      # 1
     response_dict = df.to_dict(orient='list')
 
     return response_dict
+
 
 @app.get("/sample")
 def sample(sample_request: str,):      # 1
