@@ -28,27 +28,6 @@ if uploaded_file is not None:
     data = pd.read_csv(uploaded_file)
     st.write(data)
 
-# Select specific location
-date_time_position = st.date_input("Set date", value=datetime.datetime(2019,7,6))
-boat_longitude = st.number_input('Boat\'s Longitude', value=-73.950655, step=1e-7, format="%.6f")
-boat_latitude = st.number_input('Boat\'s Latitude', value=40.783282, step=1e-7, format="%.6f")
-distance_from_shore=st.number_input('Boat\'s Distance from shore', value=20),
-distance_from_port= st.number_input('Boat\'s Distance from port', value=20),
-speed=st.number_input('Boat\'s Speed', value=20),
-course=st.number_input('Boat\'s Course', value=20),
-
-
-# Dictionary containing the parameters for our API...
-params = dict(
-    pickup_datetime=date_time_position,
-    boat_longitude=boat_longitude,
-    boat_latitude=boat_latitude,
-    distance_from_shore=distance_from_shore,
-    distance_from_port= distance_from_port,
-    speed=speed,
-    course=course
-    )
-
 # URL to call
 url = ''
 
