@@ -19,7 +19,7 @@ warnings.filterwarnings('ignore')
 def get_data(path, file_names):
     tables=[]
     for file_name in file_names:
-        table = pd.read_csv(f'../{path}/{file_name}.csv')
+        table = pd.read_csv(f'{path}/{file_name}.csv')
         table['type']=f'{file_name}'
         tables.append(table)
     return pd.concat(tables)
@@ -79,11 +79,19 @@ print(f"Accuracy: {accuracy:.2f} Precision:{precision:.2f}")
 from joblib import dump
 import os
 
+folder_path = "API/data/model"
+
+if not os.path.exists(folder_path):
+    os.makedirs(folder_path)
+    print("Folder created successfully.")
+else:
+    print("Folder already exists.")
+
 # Get the current directory
 current_directory = os.getcwd()
 
 # Navigate to the desired directory
-target_directory = os.path.join(current_directory, '..', 'API/data/model')
+target_directory = os.path.join(current_directory, 'API/data/model')
 # Create the target directory if it doesn't exist
 os.makedirs(target_directory, exist_ok=True)
 
