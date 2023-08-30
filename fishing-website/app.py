@@ -1,44 +1,120 @@
 import streamlit as st
-from PIL import Image
 import pandas as pd
+import datetime
+import requests
+import folium
 
+from streamlit_folium import st_folium, folium_static
+from PIL import Image
+
+# Title
 st.title('Illegal Fishing')
 
+# Map
 st.markdown('''
 Below is a map of sample fishing events around the world 🗺''')
-
 image = Image.open('../data/output.png')
-
 st.image(image, caption='Fishing events around the World')
 
-st.file_uploader("Please upload the csv of the boat your would like to track")
-
+# Information below map
 st.markdown('''
-Our goal is to predict based on the boat's trajectory events went it was fishing or not as well as predict the fishing gear used by the boat''')
-boat_longitude = st.number_input('Current Boat\'s Longitude', value=-73.950655, step=1e-7, format="%.6f")
-boat_latitude = st.number_input('Current Boat\'s Latitude', value=40.783282, step=1e-7, format="%.6f")
+Our goal is to predict based on the boat's trajectory, instances when the boat was fishing
+as well as predict the fishing gear used by the vessel''')
 
-'''
-## Once we have these, let's call our API in order to retrieve a prediction
+# Upload csv information
+st.set_option('deprecation.showfileUploaderEncoding', False)
+uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
+if uploaded_file is not None:
+    data = pd.read_csv(uploaded_file)
+    st.write(data)
 
-See ? No need to load a `model.joblib` file in this app, we do not even need to know anything about Data Science in order to retrieve a prediction...
+# URL to call
+url = ''
 
-🤔 How could we call our API ? Off course... The `requests` package 💡
-'''
+if st.button("Is this boat fishing?"):
+    #res = requests.get(url, params=params).json()
+    #st.subheader(f"The boat is fishing {res['result']}")
+    place_lat=data["lat"].tolist()
+    place_lng=data["lon"].tolist()
 
-url = 'https://taxifare.lewagon.ai/predict'
+    num = round(len(place_lat)/2)
 
-if url == 'https://taxifare.lewagon.ai/predict':
+    map = folium.Map(location=[place_lat[num], place_lng[num]])
 
-    st.markdown('Maybe you want to use your own API for the prediction, not the one provided by Le Wagon...')
+    points = []
+    for i in range(len(place_lat)):
+        points.append([place_lat[i], place_lng[i]])
 
-'''
+    for index,lat in enumerate(place_lat):
+        folium.Marker([lat,
+                    place_lng[index]],
+                    popup=('patient{} \n 74contacts'.format(index)),
+                    icon = folium.Icon(color='green',icon='plus', icon_size=(15,15))).add_to(map)
+    folium.PolyLine(points, color='red').add_to(map)
+    folium_static(map)
 
-2. Let's build a dictionary containing the parameters for our API...
+if st.button("Test map2"):
+    place_lat=data["lat"].tolist()
+    place_lng=data["lon"].tolist()
+    num = round(len(place_lat)/2)
 
-3. Let's call our API using the `requests` package...
+    base_map = folium.Map(location=[place_lat[num], place_lng[num]], control_scale=True)
 
-4. Let's retrieve the prediction from the **JSON** returned by the API...
+    df_fishing = data[data['is_fishing']==1]
+    fishing = list(zip(df_fishing.lat, df_fishing.lon))
 
-## Finally, we can display the prediction to the user
-'''
+    df_not_fishing = data[data['is_fishing']==0]
+    not_fishing = list(zip(df_not_fishing.lat, df_not_fishing.lon))
+
+    for fish in fishing:
+        icon=folium.Icon(color='white', icon_color="yellow")
+        folium.Marker(fish, icon=icon).add_to(base_map)
+
+    for notfish in not_fishing:
+        icon=folium.Icon(color='white', icon_color="red")
+        folium.Marker(notfish, icon=icon).add_to(base_map)
+
+    points = []
+    for i in range(len(place_lat)):
+        points.append([place_lat[i], place_lng[i]])
+
+    folium.PolyLine(locations=points, color='green').add_to(base_map)
+    folium_static(base_map)
+
+if st.button("Test map3"):
+    place_lat=data["lat"].tolist()
+    place_lng=data["lon"].tolist()
+    num = round(len(place_lat)/2)
+
+    base_map = folium.Map(location=[place_lat[num], place_lng[num]], control_scale=True)
+
+    df_fishing = data[data['is_fishing']==1]
+    fishing = list(zip(df_fishing.lat, df_fishing.lon))
+
+    df_not_fishing = data[data['is_fishing']==0]
+    not_fishing = list(zip(df_not_fishing.lat, df_not_fishing.lon))
+
+    for fish in fishing:
+        icon=folium.Icon(color='white', icon_color="yellow")
+        folium.Marker(fish, icon=icon).add_to(base_map)
+
+    for notfish in not_fishing:
+        icon=folium.Icon(color='white', icon_color="red")
+        folium.Marker(notfish, icon=icon).add_to(base_map)
+
+    points = []
+    for i in range(len(place_lat)):
+        points.append([place_lat[i], place_lng[i]])
+
+    folium.PolyLine(locations=points, color='green').add_to(base_map)
+
+    sw = data[['lat', 'lon']].min().values.tolist()
+    ne = data[['lat', 'lon']].max().values.tolist()
+    base_map.fit_bounds([sw, ne])
+
+    folium_static(base_map)
+
+
+if st.button("What type of gear is this boat using?"):
+    res = requests.get(url, params=params).json()
+    st.subheader(f"The boat is using {res['result']}")
