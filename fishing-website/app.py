@@ -30,17 +30,19 @@ if uploaded_file is not None:
 
     if st.button("Check this boat"):
         # Define the API endpoint URL
-        #base_url =  "https://fishingclassification-hfis4rtnsq-ew.a.run.app"
-        #endpoint = "/sample"
+        base_url =  "https://fishingclassification-hfis4rtnsq-ew.a.run.app"
+        endpoint = "/sample"
 
-        #params = {
-        #    "sample_request": df
-        #    }
+        params = {
+            "sample_request": df.to_json()
+            }
 
+
+        response = requests.get(f"{base_url}{endpoint}", params=params)
         #print( 'query :', f"{base_url}{endpoint}?sample_request=trawlers")
 
         # Get API response into json() format
-        response = requests.get("https://fishingclassification-hfis4rtnsq-ew.a.run.app/sample?sample_request=trawlers").json()
+        #response = requests.get("https://fishingclassification-hfis4rtnsq-ew.a.run.app/sample?sample_request=trawlers").json()
 
         # Convert response to Pandas Dataframe
         data = pd.DataFrame(response)
