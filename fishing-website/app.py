@@ -38,7 +38,7 @@ if uploaded_file is not None:
             }
 
 
-        response = requests.get(f"{base_url}{endpoint}", params=params)
+        response = requests.get(f"{base_url}{endpoint}", params=params).json()
         #print( 'query :', f"{base_url}{endpoint}?sample_request=trawlers")
 
         # Get API response into json() format
