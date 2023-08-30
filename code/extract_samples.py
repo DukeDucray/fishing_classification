@@ -1,5 +1,5 @@
 import pandas as pd
-import numpy as np
+import os
 
 # # get_data
 def get_data(path, file_name):
@@ -38,6 +38,14 @@ def send_csv(df, file_name):
 
 
 # MAIN
+folder_path = "API/data/sample_data"
+
+if not os.path.exists(folder_path):
+    os.makedirs(folder_path)
+    print("Folder created successfully.")
+else:
+    print("Folder already exists.")
+
 # # Extract all sample to .csv
 path='data/raw_data'
 file_names = ['trawlers', 'drifting_longlines', 'fixed_gear', 'pole_and_line', 'purse_seines', 'trollers', 'unknown']

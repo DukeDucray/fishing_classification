@@ -1,5 +1,6 @@
 
 import pandas as pd
+import numpy as np
 
 def preproc(df_fishing):
     # ## Date time (hour -> Angular distance)
