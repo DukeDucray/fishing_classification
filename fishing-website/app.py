@@ -35,6 +35,25 @@ if st.button("Check this boat"):
     data = pd.DataFrame(response)
     st.subheader(f"{data}")
 
+    # Step 1: Identify the indices of 'is_fishing' occurrences longer than 10 successive rows
+    diff = data['is_fishing'].diff()
+    start_indices = diff[diff == 1].index
+    end_indices = diff[diff == -1].index
+
+    long_occurrences = []
+    for start, end in zip(start_indices, end_indices):
+        if end - start > 200:
+            long_occurrences.append((start, end))
+
+    print(len(long_occurrences))
+
+    # Step 2 and 3: Create and plot the subsets around long 'is_fishing' occurrences
+    window_size = 50
+    for start, end in long_occurrences[:5]:
+        subset_start = max(0, start - window_size)
+        subset_end = min(len(data), end + window_size)
+        subset = data.iloc[subset_start:subset_end]
+
     # Extract lattitude and longitude from Dataframe
     place_lat=data["lat"].tolist()
     place_lng=data["lon"].tolist()
