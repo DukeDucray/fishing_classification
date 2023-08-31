@@ -1,7 +1,9 @@
 import pandas as pd
 import os
-from fastapi import FastAPI, UploadFile, File
-import io
+from fastapi import FastAPI
+
+from typing import List
+
 
 from joblib import load
 
@@ -19,33 +21,35 @@ loaded_model = load(model_path)
 app = FastAPI()
 app.state.model = loaded_model
 
+
+
 @app.post("/predict")
-async def predict(csv_file_df):
+async def predict(data: List[dict]):
     """
     Predict if the boat is fishing or not.
     Return DataFrame with 'is_fishing' column.
     """
+    df = pd.DataFrame(data)
+
     # Process uploaded CSV file and return DataFrame
-    df = preproc(csv_file_df)  # Replace with your preproc function
+    df = preproc(df)
 
     # Assuming you preprocess the DataFrame and drop certain columns
-    df = df.drop(columns=['source', 'date', 'hour'])
+    df = df.drop(columns=['source'])
 
     #Run model
     y_pred = app.state.model.predict(df)
 
-    # Convert y_pred to a Python list
-    y_pred_list = y_pred.tolist()
+    # Create and return the prediction response as a dictionary
+    response_data = {
+        "lat": df['lat'].tolist(),
+        "lon": df['lon'].tolist(),
+        "is_fishing": y_pred.tolist()
+    }
 
-    # Update the 'is_fishing' column with the predictions
-    df['is_fishing'] = y_pred_list
+    return response_data
 
-    # Convert DataFrame to a JSON-serializable format (e.g., a list of dictionaries)
-    response_dict = df.to_dict(orient='list')
-
-    return response_dict
-
-
+'''
 @app.get("/sample")
 def sample(sample_request: str,):      # 1
     """
@@ -76,7 +80,7 @@ def sample(sample_request: str,):      # 1
     response_dict = df.to_dict(orient='list')
 
     return response_dict
-
+'''
 
 
 
@@ -84,6 +88,7 @@ def sample(sample_request: str,):      # 1
 def root():
     return {
         'greeting': 'Hello'
+
     }
 
 
